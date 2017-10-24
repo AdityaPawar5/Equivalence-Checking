@@ -1,0 +1,20 @@
+read_verilog DecimationFilter.v 
+prep -flatten -top DecimationFilter
+splitnets -ports;;
+design -stash gold
+
+read_verilog DecimationFilter_syn.v
+read_verilog ARlogic.v
+prep -flatten -top DecimationFilter
+splitnets -ports;;
+design -stash gate
+
+design -copy-from gold -as gold DecimationFilter
+design -copy-from gate -as gate DecimationFilter
+
+equiv_make gold gate equiv
+clean -purge; show
+ 
+equiv_status -assert
+
+

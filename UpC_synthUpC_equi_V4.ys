@@ -11,6 +11,6 @@ design -copy-from gold -as gold UpCounter
 design -copy-from gate -as gate UpCounter
 equiv_make gold gate equiv
 hierarchy -top equiv
-clean -purge; show
+clean -purge;
 equiv_simple 
 equiv_status -assert

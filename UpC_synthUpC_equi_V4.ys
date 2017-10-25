@@ -1,0 +1,16 @@
+read_verilog UpCounter.v
+prep -flatten -top UpCounter
+splitnets -ports;;
+design -stash gold
+read_verilog synth_UpCounter.v
+read_verilog logic.v
+prep -flatten -top UpCounter
+splitnets -ports;;
+design -stash gate
+design -copy-from gold -as gold UpCounter
+design -copy-from gate -as gate UpCounter
+equiv_make gold gate equiv
+hierarchy -top equiv
+clean -purge; show
+equiv_simple
+equiv_status -assert

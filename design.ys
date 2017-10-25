@@ -1,0 +1,38 @@
+#! /bin/bash
+
+read_verilog UpCounter.v
+read_liberty -lib -ignore_miss_dir -setattr blackbox logic.lib
+# High-level synthesis
+synth
+
+# Map register flops
+dfflibmap -liberty logic.lib
+
+#cover trees of MUX cells with wider MUXes
+#muxcover -mux4 -mux8 -nodecode
+
+#Map DLatch, MUX41 & MUX81
+#techmap -map techmap.v
+
+opt
+
+# Map combinational cells, standard script
+abc -liberty logic.lib -script +strash;scorr;ifraig;retime,{D};strash;dch,-f;map,-M,1,{D}
+
+#abc -liberty /home/arguest/arails/arails17b/project/generic/ARlogic/AnalogRailsConf/Digital/ARlogic.lib -script +strash;scorr;ifraig;retime,{D};strash;dch,-f;map,-M,1,{D}
+
+# Map constant High/Low values to TIEHL cell
+hilomap -singleton -hicell TIEHL tiehi -locell TIEHL tielo
+
+clean -purge
+
+# Cleanup
+opt
+clean
+
+write_verilog synth_UpCounter.v
+
+# Equivalence Checking 
+
+
+
